@@ -1,6 +1,12 @@
-var express = require('express');
-var cors = require('cors');
-var app = express();
+var express = require('express')
+    , session = require('express-session')
+    , mysql = require('mysql')
+    , cors = require('cors')
+    , app = express()
+    , bcrypt = require('bcrypt')
+const saltRounds = 10;
+
+// -----------------------------------------
 
 app.use(cors());
 
@@ -10,8 +16,6 @@ let bodyParser = require('body-parser');
 let urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // for reading JSON
-
-var mysql = require('mysql');
 
 var con = mysql.createConnection({
     host: "localhost",
@@ -25,17 +29,18 @@ con.connect((err) => {
     else console.log("Connection failed");
 });
 
-// GET ALL INFO
+// ----------------------------------------- NEVEREVER DATABASE
+
+// GET ALL INFO FROM neverever
 app.get('/neverever', (req, res) => {
     con.query('SELECT * FROM neverever', (err, rows) => {
         if (!err) {
-            console.log(rows);
             res.send(rows);
         } else console.log(err);
     });
 });
 
-// GET SINGLE INFO
+// GET SINGLE INFO FROM neverever
 app.post(`/neverever/prompt`, (req, res) =>{
     con.query('SELECT * FROM neverever WHERE statement LIKE ?', '%' + [req.body.statement] + '%',(err, rows) =>{
        if(!err) res.send(rows);
@@ -43,7 +48,7 @@ app.post(`/neverever/prompt`, (req, res) =>{
     });
 });
 
-// DELETE THE INFO
+// DELETE THE INFO FROM neverever
 app.delete('/neverever/:id', function (req, res){
     con.query('DELETE FROM neverever WHERE id = ?',[req.params.id],(err, rows)=>{
         if(!err){
@@ -55,7 +60,7 @@ app.delete('/neverever/:id', function (req, res){
     });
 });
 
-// UPDATE THE INFO
+// UPDATE THE INFO IN neverever
 app.put('/neverever', (req, res) =>{
     con.query('UPDATE neverever SET statement = ? WHERE id = ?', [req.body.statement, req.body.id], (err, rows)=>{
        if(!err) res.send(rows);
@@ -63,7 +68,7 @@ app.put('/neverever', (req, res) =>{
     });
 });
 
-// ADD NEW INFO
+// ADD NEW INFO TO neverever
 app.post('/neverever/add', (req, res) =>{
     var jsonObj = req.body;
 
@@ -76,7 +81,98 @@ app.post('/neverever/add', (req, res) =>{
     });
 });
 
-var server = app.listen(8081, function () {
+// ----------------------------------------- USERS DATABASE
+
+// GET ALL INFO FROM users
+app.get('/users', (req, res) => {
+    con.query('SELECT * FROM users', (err, rows) => {
+        if (!err) {
+            res.send(rows);
+        } else console.log(err);
+    });
+});
+
+// GET SINGLE INFO FROM users AND CHECK THE PASSWORD MATCHING
+app.post(`/users/this`, (req, res) =>{
+    con.query('SELECT * FROM users WHERE user_name LIKE ?', [req.body.user_name],(err, rows) =>{
+        if(!err){
+            bcrypt.compare(req.body.user_password, rows[0].user_password, function(err, result){
+                res.send(result);
+            });
+        }
+        else console.log(err);
+    });
+});
+
+// ADD NEW INFO TO users
+app.post('/users/add', (req, res) =>{
+    var jsonObj = req.body;
+    bcrypt.hash(req.body.user_password, saltRounds, function(err, hash) {
+        bcrypt.compare(req.body.user_password, hash, function(err, result){
+            if(!err){
+
+                if(result) {
+                    con.query('INSERT INTO users(user_name, user_level, user_password) VALUES(?,?,?)', [jsonObj.user_name, jsonObj.user_level, hash], (err, rows) => {
+                        if (!err) {
+                            res.send("User added.");
+                            console.log(rows);
+                        } else console.log(err);
+                    });
+                }else res.send("Something went wrong.");
+            }
+        });
+    });
+});
+
+// GET SINGLE INFO FROM users BY NAME
+app.post(`/users/info`, (req, res) =>{
+    con.query('SELECT * FROM users WHERE user_name LIKE ?', [req.body.user_name],(err, rows) =>{
+        if(!err) res.send(rows);
+        else console.log(err);
+    });
+});
+
+// GET SINGLE INFO FROM users BY ID
+app.post(`/users/:id`, (req, res) =>{
+    con.query('SELECT * FROM users WHERE user_id LIKE ?', [req.params.id],(err, rows) =>{
+        if(!err) res.send(rows);
+        else console.log(err);
+    });
+});
+
+// UPDATE THE PASSWORD IN users
+app.put('/users/update', (req, res) =>{
+    bcrypt.hash(req.body.new_password, saltRounds, function(err, hash) {
+        bcrypt.compare(req.body.new_password, hash, function(err, result) {
+            if (!err) {
+
+                if(result) {
+                    con.query('UPDATE users SET user_password = ? WHERE user_id = ?', [hash, req.body.user_id], (err, rows) => {
+                        if (!err) {
+                            res.send(true);
+                            console.log(rows);
+                        } else {
+                            console.log(err);
+                            res.send(false);
+                        }
+                    });
+                }else res.send(false);
+            }else res.send(err);
+        });
+    });
+});
+
+// UPDATE THE NAME IN users
+app.put('/users/username/update', (req, res) =>{
+    con.query('UPDATE users SET user_name = ? WHERE user_id = ?', [req.body.user_name, req.body.user_id], (err, rows)=>{
+        if(!err) res.send(rows);
+        else console.log(err);
+    });
+});
+
+// -----------------------------------------
+
+var server =  app.listen(8081, function () {
     var host = server.address().address
     var port = server.address().port
 

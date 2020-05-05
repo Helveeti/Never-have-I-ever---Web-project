@@ -1,36 +1,41 @@
 <template>
     <div id="login">
         <h1>Login</h1>
-        <input type="text" name="username" v-model="input.username" placeholder="Username" />
-        <input type="password" name="password" v-model="input.password" placeholder="Password" />
+        <input type="text" name="username" v-model="input.user_name" placeholder="Username" pattern="[a-zA-Z0-9-]+" />
+        <input type="password" name="password" v-model="input.user_password" placeholder="Password" pattern="[a-zA-Z0-9-]+" />
         <button type="button" v-on:click="login()">Login</button>
     </div>
 </template>
 
 <script>
+    import nodeService from "@/nodeService";
+
     export default {
         name: 'Login',
         data() {
             return {
                 input: {
-                    username: "",
-                    password: ""
-                }
+                    user_name: "",
+                    user_password: "",
+                },
             }
         },
         methods: {
-            login() {
-                if(this.input.username != "" && this.input.password != "") {
-                    if(this.input.username == this.$parent.mockAccount.username && this.input.password == this.$parent.mockAccount.password) {
+            async login() {
+                if(this.input.user_name != "" && this.input.user_password != "") {
+                    var haku = JSON.parse('{ "user_name": "' + this.input.user_name + '", "user_password": "' + this.input.user_password + '"}');
+                    var response = await nodeService.getTiettyUser(haku);
+
+                    if(response) {
                         this.$emit("authenticated", true);
-                        this.$router.replace({ name: "Browse" });
+                        await this.$router.replace({ name: "Browse" });
                     } else {
                         console.log("The username and / or password is incorrect");
                     }
                 } else {
                     console.log("A username and password must be present");
                 }
-            }
+            },
         }
     }
 </script>

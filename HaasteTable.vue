@@ -77,6 +77,7 @@
                 this.cachedHaaste = Object.assign({}, haaste)
                 this.editing = haaste.id
             },
+
             cancelEdit(haaste) {
                 Object.assign(haaste, this.cachedHaaste)
                 this.editing = null;

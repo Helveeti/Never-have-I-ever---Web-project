@@ -23,6 +23,7 @@
                     v-model="haaste.name"
                     @focus="clearStatus"
                     @keypress="clearStatus"
+                    pattern="[a-zA-Z0-9-]+"
             />
             <label>Never have I ever...</label>
             <input
@@ -30,6 +31,7 @@
                     :class="{ 'has-error': submitting && invalidStatement }"
                     v-model="haaste.statement"
                     @focus="clearStatus"
+                    pattern="[a-zA-Z0-9-]+"
             />
             <div class="radio">
                 <input type="radio"

@@ -8,28 +8,6 @@
     </div>
     <router-view @authenticated="setAuthenticated" />
   </div>
-
-    <!--<b-container>
-      <b-row>
-        <b-col>
-          <navbar />
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col>
-          <router-view/>
-        </b-col>
-      </b-row>
-    </b-container>-->
-
-    <!--<haaste-form @add:haaste="addHaaste" />
-    <haaste-table
-            v-bind:haasteet="haasteet"
-            @delete:haaste="deleteHaaste"
-            @edit:haaste="editHaaste"
-    />
-
-  </div>-->
 </template>
 
 <script src="node.js"></script>
@@ -38,6 +16,7 @@
   import HaasteTable from "@/components/HaasteTable.vue";
   import HaasteForm from "@/components/HaasteForm.vue";
   import navbar from "@/components/navbar";
+  import nodeService from "@/nodeService";
 
   export default {
     name: 'app',
@@ -45,14 +24,11 @@
       navbar,
       HaasteTable,
       HaasteForm,
+      nodeService,
     },
     data() {
       return {
         authenticated: false,
-        mockAccount: {
-          username: "admin",
-          password: "admin"
-        }
       }
     },
     mounted() {
@@ -66,7 +42,8 @@
       },
       logout() {
         this.authenticated = false;
-      }
+        //nodeService.destroySession();
+      },
     }
   }
 </script>

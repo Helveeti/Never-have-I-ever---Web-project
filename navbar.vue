@@ -7,7 +7,7 @@
             <b-nav-item :to="{ name: 'Form' }"  >Lisää tapahtuma</b-nav-item>
             <b-nav-item :to="{ name: 'Browse' }">Listaa tapahtuma</b-nav-item>
         </b-navbar-nav>
-        <b-navbar-brand :to="{ name: 'HaasteTable' }">Oma tili</b-navbar-brand>
+        <b-navbar-brand :to="{ name: 'Account' }">Oma tili</b-navbar-brand>
     </b-navbar>
 </template>
 
