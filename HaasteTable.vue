@@ -1,6 +1,8 @@
 <template>
     <div id="haaste-table">
 
+        <!-- NAV -->
+
         <b-container>
             <b-row>
                 <b-col>
@@ -14,6 +16,14 @@
             </b-row>
         </b-container>
 
+        <!-- SEARCH INPUT -->
+
+        <hr>
+        <input type="text" id="search" @keydown="nappain('input', $event)" placeholder="Hae..." width="100">
+        <hr>
+
+        <!-- PRINT FETCHED STATEMENTS -->
+
         <table>
             <thead>
             <tr>
@@ -21,7 +31,6 @@
                 <th>Haaste</th>
                 <th>Kieli</th>
                 <th>Actions</th>
-                <th><input type="search" id="search" @keydown="nappain('input', $event)" placeholder="Hae..." width="100%"></th>
             </tr>
             </thead>
             <tbody>
@@ -105,6 +114,8 @@
                 console.log("Deleted");
             },
 
+            /* SEARCH FUNCTION */
+
             nappain(where, e){
                 console.log(`keyuptest at ${where} with code ${e.key}`);
 
@@ -118,11 +129,12 @@
                         this.getYksiHaaste(haku);
                     }else{
                         this.getHaasteita();
+                        haku = '';
                     }
                 }
-
-
             },
+
+            /* FETCH SEARCHED STATEMENT */
 
             async getYksiHaaste(haaste){
                 var response = await nodeService.getTiettyHaaste(haaste);
@@ -134,6 +146,11 @@
 </script>
 
 <style scoped>
+    tbody {
+        overflow: auto;
+        white-space: nowrap;
+    }
+
     button {
         margin: 0 0.5rem 0 0;
     }

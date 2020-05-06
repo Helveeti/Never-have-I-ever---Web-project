@@ -1,7 +1,8 @@
 <template>
   <div id="app" class="small-container">
-    <h1>Never have I ever...</h1>
     <p class="error" v-if="error">{{error}}</p>
+
+    <img src="./assets/neverever.png" width="300"> <!-- LOGO -->
 
     <div id="nav">
       <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout</router-link>
@@ -42,12 +43,12 @@
       },
       logout() {
         this.authenticated = false;
-        //nodeService.destroySession();
       },
     }
   }
 </script>
 <style>
+
   button {
     background: #009435;
     border: 1px solid #009435;

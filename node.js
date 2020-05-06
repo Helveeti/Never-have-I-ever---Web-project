@@ -1,5 +1,4 @@
 var express = require('express')
-    , session = require('express-session')
     , mysql = require('mysql')
     , cors = require('cors')
     , app = express()

@@ -1,7 +1,7 @@
 <template>
     <div id="omasivu">
 
-        <!-- ----------------------------------------- NAVBAR -->
+        <!-- NAVBAR -->
 
         <b-container>
             <b-row>
@@ -16,39 +16,47 @@
             </b-row>
         </b-container>
 
-        <!-- ----------------------------------------- TABLE -->
+        <!-- FORM -->
 
-        <table>
-            <thead>
-            <tr>
-                <th>Käyttäjänimi</th>
-                <th>Käyttäjäoikeudet</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="user in tiedot" :key="user.id">
-                <td v-if="editing === user.id">
-                    <input type="text" v-model="user.user_name" />
-                </td>
-                <td v-else>{{user.user_name}}</td>
-                <td>{{user.user_level}}</td>
-                <td v-if="editing === user.id">
-                    <button @click="editUser(user)">Save</button>
-                    <button class="muted-button" @click="editing = null">Cancel</button>
-                </td>
-                <td v-else>
-                    <button @click="editMode(user.id)">Edit</button>
-                </td>
-            </tr>
-            </tbody>
+        <form>
 
-            <br>
-            <br>
+            <!-- VIEW USER -->
 
-            <input type="password" name="newpassword" v-model="input.new_password" placeholder="New password" pattern="[a-zA-Z0-9-]+{8,}" />
-            <input type="password" name="repeatpassword" v-model="input.repeat_password" placeholder="Repeat password" pattern="[a-zA-Z0-9-]+{8,}" />
-            <button type="button" v-on:click="handleSubmit()">Päivitä</button>
-        </table>
+            <div id="userView">
+
+                <div>
+                    Käyttäjänimi:
+                    <td v-if="editing === tiedot[0].user_id">
+                        <input type="text" v-model="tiedot[0].user_name" />
+                    </td>
+                    <td v-else>{{tiedot[0].user_name}}</td>
+
+                    <td v-if="editing === tiedot[0].user_id">
+                        <button @click="editUser(tiedot[0])">Save</button>
+                        <button class="muted-button" @click="editing = null">Cancel</button>
+                    </td>
+                    <td v-else>
+                        <button @click="editMode(tiedot[0].user_id)">Edit</button>
+                    </td>
+
+                </div>
+
+            </div>
+
+            <!-- CHANGE PASSWORD -->
+
+            <div id="salasana">
+                <div>
+                    Vaihda salasana: <input type="password" name="newpassword" v-model="input.new_password" placeholder="New password" pattern="[a-zA-Z0-9-]+{8,}" />
+                </div>
+
+                <div>
+                    Salana uudestaan: <input type="password" name="repeatpassword" v-model="input.repeat_password" placeholder="Repeat password" pattern="[a-zA-Z0-9-]+{8,}" />
+                </div>
+                <button type="button" v-on:click="handleSubmit()">Päivitä</button>
+            </div>
+
+        </form>
 
     </div>
 </template>
@@ -121,5 +129,9 @@
 <style scoped>
     button {
         margin: 0 0.5rem 0 0;
+    }
+
+    #salasana {
+        /*background: red;*/
     }
 </style>

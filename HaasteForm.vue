@@ -1,6 +1,8 @@
 <template>
     <div id="haaste-form">
 
+        <!-- NAV -->
+
         <b-container>
             <b-row>
                 <b-col>
@@ -14,6 +16,8 @@
             </b-row>
         </b-container>
 
+        <!-- FORM -->
+
         <form @submit.prevent="handleSubmit">
             <label>Name</label>
             <input
@@ -24,6 +28,7 @@
                     @focus="clearStatus"
                     @keypress="clearStatus"
                     pattern="[a-zA-Z0-9-]+"
+                    :placeholder="tiedot[0].user_name"
             />
             <label>Never have I ever...</label>
             <input
@@ -31,7 +36,6 @@
                     :class="{ 'has-error': submitting && invalidStatement }"
                     v-model="haaste.statement"
                     @focus="clearStatus"
-                    pattern="[a-zA-Z0-9-]+"
             />
             <div class="radio">
                 <input type="radio"
@@ -49,13 +53,19 @@
                        name="FIN">
                 <label for="FIN">FIN</label>
             </div>
+
+            <!-- MESSAGES -->
+
             <p v-if="error && submitting" class="error-message">
                 ❗Please fill out all required fields
             </p>
             <p v-if="success" class="success-message">
                 ✅ Prompt successfully added
             </p>
-            <button>Add Prompt</button>
+
+
+            <button>Add</button>
+
         </form>
     </div>
 </template>
@@ -67,6 +77,7 @@
     export default {
         name: "haaste-form",
         components: {navbar},
+        props: {tiedot: Array},
         data() {
             return {
                 submitting: false,
@@ -79,7 +90,16 @@
                 }
             }
         },
+        mounted() {
+            this.getUserSession()
+        },
         methods: {
+            async getUserSession() {
+                var response = await nodeService.getStorageInfo();
+                var data = JSON.parse(JSON.stringify(response));
+                this.tiedot = data;
+            },
+
             handleSubmit() {
                 this.submitting = true
                 this.clearStatus()

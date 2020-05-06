@@ -22,6 +22,7 @@
         },
         methods: {
             async login() {
+                 /* IF INPUTS NOT EMPTY -> CHECK IF MATCHING WITH DATABASE */
                 if(this.input.user_name != "" && this.input.user_password != "") {
                     var haku = JSON.parse('{ "user_name": "' + this.input.user_name + '", "user_password": "' + this.input.user_password + '"}');
                     var response = await nodeService.getTiettyUser(haku);
@@ -46,7 +47,7 @@
         border: 1px solid #CCCCCC;
         background-color: #FFFFFF;
         margin: auto;
-        margin-top: 200px;
+        margin-top: 100px;
         padding: 20px;
     }
 </style>
